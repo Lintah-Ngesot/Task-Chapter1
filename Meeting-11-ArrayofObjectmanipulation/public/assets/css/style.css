@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Roboto+Mono:ital,wght@0,200;1,400&family=Source+Code+Pro:wght@200&display=swap');
+
+*{
+    font-family: 'Poppins', sans-serif;
+    color: black;
+}
+
+body {
+    background-color: #E3E7EB ;
+}
+
+/* navbar start */
+.navbar.overlay {
+	position:fixed;
+	top:0;
+	left:0;
+	right:0;
+	height:54px;
+    font-weight: 500;
+	border:none;
+	background:linear-gradient(to bottom,rgba(0,0,0,0.2) 0%,rgba(0,0,0,0) 100%);
+	background:rgba(8, 8, 8, 0.8);
+	z-index:9;
+}
+
+.nav-contact {
+    margin-left: 13px;
+}
+
+.navbar-collapse a:hover {
+    color: black;
+    font-weight: 700;
+}
+/* navbar end */
+
+
+/* index start */
+        /* card start <=============== */
+.container-md {
+    margin-top: 90px;
+}
+
+.personal-card {
+    border: none;
+    padding: 30px;
+}
+
+.image-card img {
+    width: 290px;
+    margin: -8px;
+}
+
+.image-card h4 {
+    margin-top: 20px;
+    margin-bottom: -1px;
+}
+
+.personal-card p {
+    text-align: justify;
+}
+        /* card end <=============== */
+
+        /* list start <=============== */
+.box-list-group {
+    margin-left: 50px;
+}
+
+
+.box-list {
+    padding: 10px;
+    width: 400px;
+}
+
+.card-list-image img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+}
+
+.list-card .card-title a {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.list-card p {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+        /* list end <=============== */
+/* index end */
+
+
+/* add my project start */
+.add-project-description textarea {
+    height: 100px;
+    resize: none;
+}
+
+.project-form form .input-project-image-group {
+    width: 100%;
+    font-size: 20px;
+    font-weight: 400;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    background: #f4f3f3;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+form .input-project-image-group label p {
+    background-color: #e0dede;
+    color: #898686;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #c4c4c4;
+    margin-top: 16px; 
+}
+
+form .input-project-image-group label img {
+    margin-right: 15px;
+}
+  
+form .input-project-image-group label {
+    background-color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 46px;
+}
+
+form .input-project-image-group img {
+    width: 30px;
+    height: 30px;
+}
+
+.project-submit button {
+    float: right;
+    width: 100px;
+}
+/* add my project end */
+
+
+/* form register and login start */
+form {
+    width: 400px;
+    margin: auto;
+    font-weight: 550;
+}
+
+form .sub-register {
+    float: right;
+}
+/* form register and login end */
+
+
+/* form contact start */
+.contact-me-message textarea {
+    height: 100px;
+    resize: none;
+}
+/* form contact end */
+
+/* project detail start */
+.project-detail {
+    width: 90%;
+    margin: auto;
+}
+
+.project-detail-bg {
+    background-color: #E3E7EB;
+    border: none;
+}
+
+.project-detail .card-pd {
+    background-color: none;
+}
+
+.project-detail img {
+    width: 86%;
+    height: 500px;
+    object-fit: cover;
+}
+
+.project-detail .time-duration p {
+    margin-top: 5px;
+}
+
+.project-detail p {
+    text-align: justify;
+}
+
+.card-body small {
+    font-size: large;
+}
+/* project detail end */

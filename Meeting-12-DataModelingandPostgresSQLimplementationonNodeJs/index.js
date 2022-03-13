@@ -10,34 +10,50 @@ const app = express()
 // set up template engine
 app.set('view engine', 'hbs')
 
-//memanggil css
-app.use('/public', express.static(__dirname + '/public'))
+//===========
+app.use('/public', express.static(__dirname + '/public')) //ambil data di public
 app.use(express.urlencoded({extended: false}))
 
 //const isLogin = false
 
-//deklarasi projects
-// const postProjects = [
-//     {
-//         ProjectName: "post my project",
-//         duration: "3 Month",
-//         description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-//         nodejs: "fa-brands fa-node-js fa-2x",
-//         reactjs: "fa-brands fa-react fa-2x",
-//         nextjs: "fa-brands fa-battle-net fa-2x",
-//         typescript: "fa-brands fa-java fa-2x",
-//     }
-// ]
+
 
 
 // membuat endpoint
-app.get('/', (req, res) => { //ketika '/' diakses makan akn menampilkan respon ("hallo")
-    res.render("index")
+// app.get('/', (_req, res) => {
+//     res.render('index')
+// })
+app.get('/', (_req, res) => {
+    let query = 'SELECT id, project_name, project_description, image, node_js, react_js, next_js, type_script, author_id, start_date, end_date FROM tb_project'
+    
+    db.connect((err, client, done) => {
+        if (err) throw err
+
+        client. query(query, (err, result) => {
+            done()
+            if (err) throw err
+            let data = result.rows
+
+            data = data.map((dataProject) => {
+                return{
+                    ...dataProject,
+                    duration: durationTime(dataProject.start_date, dataProject.end_date),
+                    //isLogin: isLogin
+                }
+            })
+            res.render('index',{
+                //isLogin: isLogin,
+                postDataProjects: data,
+            })
+            
+            //console.log(data)
+        })
+    })
 })
 
-// endpoint home
-app.get('/home', (req, res) => {
-    let query = 'SELECT project_name, project_description, image, node_js, react_js, next_js, type_script, author_id, start_date, end_date FROM tb_project'
+// endpoint home, ambil data dr postgresql, ditampilkan ke home
+app.get('/home', (_req, res) => {
+    let query = 'SELECT id, project_name, project_description, image, node_js, react_js, next_js, type_script, author_id, start_date, end_date FROM tb_project'
     
     db.connect((err, client, done) => {
         if (err) throw err
@@ -60,38 +76,55 @@ app.get('/home', (req, res) => {
             //console.log(data)
         })
     })
-
-
-    // let dataProjects = postProjects.map((data) => {
-    //     return {
-    //         ...data, //spreed operator: mengembalikan data setiap indek di var yg di interasi
-    //     }
-    // })
-    // res.render('index', {
-    //     //isLogin: isLogin,
-    //     postDataProject: dataProjects
-    // })
 })
 
+app.get('/project-detail/:id', (req, res) => {
+    let {id} = req.params;
 
-//dari home mengarah ke project detail
-app.get('/home/:id', (req, res) => {
-    let id = req.params.id
-    
-    console.log(`id postingan : ${id}`);
+    db.connect((err, client, done) => {
+        if (err) throw err;
 
-    res.render('project-detail', {id : id})
+    let query = `SELECT * FROM tb_project WHERE id = ${id}`
+    //console.log(query);
+    client.query(query, (err, result) => {
+        done();
+        if (err) throw err;
+
+        let data = result.rows;
+        data = data.map((myProjectDetail) => {
+            return {
+                ...myProjectDetail,
+                duration: durationTime(myProjectDetail.start_date, myProjectDetail.end_date),
+                startUpload: getFullTime(myProjectDetail.start_date),
+                endUpload: getFullTime(myProjectDetail.end_date)
+            }
+        })
+        //console.log(myProjectDetail);
+        res.render('project-detail', {
+            postProjectDetail: data
+            })
+        })
+    })
 })
 
 
 
 // endpoint add project
-app.get('/add-project', (req, res) => {
+app.get('/add-project', (_req, res) => {
     res.render('add-project')
 })
 
-app.post('home', (req, res) => {
-    let {inputProjectName, inputDescription, nodejs, reactjs, nextjs, typescript, inputStartDate, inputEndDate} = req.body;
+// mengirim data dari add project dikirim ke home
+app.post('/add-project', (req, res) => {
+    let {inputProjectName,
+        inputDescription,
+        nodejs, 
+        reactjs, 
+        nextjs, 
+        typescript, 
+        inputStartDate, 
+        inputEndDate
+    } = req.body;
 
     let postProject = {
         inputProjectName,
@@ -101,170 +134,148 @@ app.post('home', (req, res) => {
         reactjs,
         nextjs,
         typescript,
-        author_id: 'admin',
+        //author_id: 'admin',
         inputStartDate,
         inputEndDate,
     }
 
+    console.log(postProject)
+
     db.connect((err, client, done) => {
-        query = `INSERT INTO tb_project(
-            project_name, 
-            project_description,
-            image,
-            node_js,
-            react_js,
-            next_js,
-            type_script,
-            author_id,
-            start_date,
-            end_date)
-            VALUES(
-                '${postProject.inputProjectName}',
-                '${postProject.inputDescription}',
-                '${postProject.image}',
-                '${postProject.nodejs}',
-                '${postProject.reactjs}',
-                '${postProject.nextjs}',
-                '${postProject.typescript}',
-                '${postProject.author_id}',
-                '${postProject.startDate}',
-                '${postProject.endDate}')`
-                if (err) throw err
+        if(err) throw err;
 
-                client.query(query, (err, result) => {
-                    done()
-                    if (err) throw err
-        
-                    res.redirect('/home')
-                })
-            })
-            
+        let query = `INSERT INTO tb_project
+                        (project_name, 
+                        project_description, 
+                        image, 
+                        node_js, 
+                        react_js, 
+                        next_js, 
+                        type_script,
+                        start_date,
+                        end_date)
+                    VALUES 
+                    ('${postProject.inputProjectName}', 
+                    '${postProject.inputDescription}', 
+                    '${postProject.image}', 
+                    '${postProject.nodejs}', 
+                    '${postProject.reactjs}', 
+                    '${postProject.nextjs}', 
+                    '${postProject.typescript}',
+                    '${postProject.inputStartDate}',
+                    '${postProject.inputEndDate}')`
+                    
+        client.query(query, (err, result) => {
+            done();
+            if(err) throw err;
+            res.redirect('/home')
         })
+    })
+});
 
-// app.post('/add-project', (request, respon) => {
-//     // let projectName = request.body.inputProjectName
-//     // let startDate = request.body.inputStartDate
-//     // let endDate = request.body.inputEndDate
-//     // let description = request.body.inputDescription
-//     // let nodejs = request.body.nodejs
-//     // let reactjs = request.body.reactjs
-//     // let nextjs = request.body.nextjs
-//     // let typescript = request.body.typescript
-//     let {inputProjectName, inputDescription, nodejs, reactjs, nextjs, typescript, inputStartDate, inputEndDate} = req.body;
+// endpoint delete post
+app.get('/delete-project/:id', (req, res) => {
+    let {id} = req.params;
+    db.connect((err, client, done) => {
+        if (err) throw err;
 
-//     let postProject = {
-//         inputProjectName,
-//         inputDescription,
-//         image: 'image.png',
-//         nodejs,
-//         reactjs,
-//         nextjs,
-//         typescript,
-//         author_id: 'admin',
-//         inputStartDate,
-//         inputEndDate,
-//         //duration: durationTime(startDate, endDate),
-//         //projectName,
-//         //startDate,
-//         //endDate,
-//         //description,
-//     }
-//     db.connect((err, client, done) => {
-//         query = `INSERT INTO tb_project(
-//             project_name, 
-//             project_destription,
-//             image,
-//             node_js,
-//             react_js,
-//             next_js,
-//             type_script,
-//             author_id,
-//             start_date,
-//             end_date)
-//             VALUES(
-//                 '${postProject.inputProjectName}',
-//                 '${postProject.inputDescription}',
-//                 '${postProject.image}',
-//                 '${postProject.nodejs}',
-//                 '${postProject.reactjs}',
-//                 '${postProject.nextjs}',
-//                 '${postProject.typescript}',
-//                 '${postProject.author_id}',
-//                 '${postProject.startDate}',
-//                 '${postProject.endDate}')`
+    let query = `DELETE FROM tb_project WHERE id = ${id}`;
+    client.query(query, (err, result) => {
+        done()
+        if (err) throw err
 
-//         if (err) throw err
+        res.redirect('/home')
+        })
+    })
+});
 
-//         client.query(query, (err, result) => {
-//             done()
-//             if (err) throw err
-
-//             res.redirect('/home')
-//         })
-//     })
-//     //postDataProjects.push(postProject)    // push data
-//     //respon.redirect('/home')    //menampilkan form mana setelah push
-// })
-
-app.get('/delete-post/:index', (req, res) => {
-    let index = req.params.index
-
-    console.log(`delete index : ${index}`);
-
-    postProjects.splice(index, 1)
-    res.redirect('/home')
-})
-
+// endpoint update project, ambil data dr home
 app.get('/update-project/:id', (req, res) => {
-    let {id} = req.params
-    let query = `SELECT * FROM tb_project WHERE id = ${id}`
+    let {id} = req.params;
 
     db.connect((err, client, done) => {
-        if (err) throw err
+        if (err) throw err;
 
+        let query = `SELECT * FROM tb_project WHERE id = ${id}`;
         client.query(query, (err, result) => {
-            done()
-            if (err) throw err
-            result = result.rows[0]
-            respon.render('update-project', {update: result})
+            done();
+            if (err) throw err;
+
+            let data = result.rows
+            data = data.map((dataUpdate) => {
+                return {
+                    ...dataUpdate,
+                    startUpload: getUploadFullTime(dataUpdate.start_date),
+                    endUpload: getUploadFullTime(dataUpdate.end_date)
+                }
+            })
+
+            //result = result.rows[0] 
+            // result = data.map((dataUpdate) => {
+            //     return {
+            //         ...dataUpdate,
+            //         startUpload: getUploadFullTime(dataUpdate.start_date),
+            //         endUpload: getUploadFullTime(dataUpdate.end_date)
+            //     }
+            // })
+
+            console.log(data)
+            //console.log(result)
+           
+
+            res.render('update-project', {
+                update: data,
+                //startUpload: getUploadFullTime(result.start_date),
+                //endUpload: getUploadFullTime(result.end_date)
+            })
+            //console.log(result)
         })
     })
 })
 
+// kirim data dari form ke home
 app.post('/update-project/:id', (req, res) => {
-    let {id} = req.params
-    let {inputProjectName, inputDescription, nodejs, reactjs, nextjs, typescript, inputStartDate, inputEndDate} = req.body;
+    let {id} = req.params;
 
-    let query = `UPDATE tb_project SET project_name='${inputProjectName}', project_description='${inputDescription}', node_js='${nodejs}', react_js='${reactjs}', next_js='${nextjs}', type_script='${typescript}', start_date='${inputStartDate}', end_date='${inputEndDate}' WHERE id=${id}`
+    let {inputProjectName, inputDescription, nodejs, reactjs, nextjs, typescript, inputStartDate, inputEndDate} = req.body;
+    let uploadProject = {
+        inputProjectName,
+        inputDescription,
+        nodejs,
+        reactjs,
+        nextjs,
+        typescript,
+        inputStartDate,
+        inputEndDate
+    }
+
+    console.log(uploadProject)
+
     db.connect((err, client, done) => {
-        if (err) throw err
+        if (err) throw err;
+
+        let query = `UPDATE tb_project SET project_name='${uploadProject.inputProjectName}', project_description='${uploadProject.inputDescription}', node_js='${uploadProject.nodejs}', react_js='${uploadProject.reactjs}', next_js='${uploadProject.nextjs}', type_script='${uploadProject.typescript}', start_date='${uploadProject.inputStartDate}', end_date='${uploadProject.inputEndDate}' WHERE id ='${id}' `;
+
         client.query(query, (err, result) => {
-            done()
-            if (err) throw err
-            res.redirect('home')
+            done();
+            if (err) throw err;
+
+            res.redirect('/home')
         })
     })
 })
 
-app.get('/contact-me', (req, res) => {
+// endpoint contct me
+app.get('/contact-me', (_req, res) => {
     res.render('contact-me')
 })
 
-// app.get('/login', (req, res) => {
-//     res.render('login')
-// })
 
-app.get('/project-detail', (req, res) => {
-    res.render('project-detail')
-})
 
-// app.get('/register', (req, res) => {
-//     res.render('register')
-// })
 
-// app.get('/update-project', (req, res) => {
-//     res.render('update-project')
-// })
+
+
+
 
 
 
@@ -279,11 +290,49 @@ app.listen(port, () => { //  erofunction
 })
 
 
-//function
-function durationTime(startDate, endDate) {
+
+// ========== UNTUK DI PROJECT DETAIL ========== //
+const month = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'Mei',
+    'Jun',
+    'Jul',
+    'Agu',
+    'Sep',
+    'Okt',
+    'Nov',
+    'Des'
+]
+
+function getFullTime(time) {
+
+    const date = time.getDate()
+    const monthIndex = time.getMonth()
+    const year = time.getFullYear()
+
+    let hours = time.getHours()
+    let minutes = time.getMinutes()
+
+    if (hours < 10) {
+        hours = `0${hours}`
+    }
+
+    if (minutes < 10) {
+        minutes = `0${minutes}`
+    }
+
+    return `${date} ${month[monthIndex]} ${year}`
+}
+
+
+// ========== UNTUK DI PROJECT DETAIL $ LIST ========== //
+function durationTime(start_date, end_date) {
     // Convert Start - End Date to Days
-    let newStartDate = new Date(startDate)
-    let newEndDate = new Date(endDate)
+    let newStartDate = new Date(start_date)
+    let newEndDate = new Date(end_date)
     let duration = Math.abs(newStartDate - newEndDate)
 
     let day = Math.floor(duration / (1000 * 60 * 60 * 24))
@@ -297,4 +346,40 @@ function durationTime(startDate, endDate) {
         }
 
     }
+}
+
+// ========== UNTUK DI UPDATE PROJECT ========== //
+const monthUpdate = [
+    '01',
+    '02',
+    '03',
+    '04',
+    '05',
+    '06',
+    '07',
+    '08',
+    '09',
+    '10',
+    '11',
+    '12'
+]
+
+function getUploadFullTime(time) {
+
+    const date = time.getDate()
+    const monthIndex = time.getMonth()
+    const year = time.getFullYear()
+
+    let hours = time.getHours()
+    let minutes = time.getMinutes()
+
+    if (hours < 10) {
+        hours = `0${hours}`
+    }
+
+    if (minutes < 10) {
+        minutes = `0${minutes}`
+    }
+
+    return `${year}-${monthUpdate[monthIndex]}-${date}`
 }

@@ -44,12 +44,12 @@
           </ul>
           <span class="navbar-text">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
+              {{!-- <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="/register">Register</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/login">Login</a>
-              </li>
+              </li> --}}
               <li class="nav-contact">
                 <a href="/contact-me" class="btn btn-dark text-white" aria-current="page">Contact Me</a>
               </li>
@@ -63,23 +63,24 @@
     <!-- add project start -->
     <div class="position-relative ">
         <div class="position-absolute top-0 start-50 translate-middle-x"><br><br>
-            <form class="row g-3" action="/update-project/{{update.id}}" method="POST" enctype="multipart/form-data">
+        {{#each update}}
+            <form class="row g-3" action="/update-project/{{this.id}}" method="POST">
                 <h4 class="text-center"><strong>UPDATE MY PROJECT</strong></h4>
                 <div class="col-12">
                     <label for="inputProjectName" class="form-label">Project Name</label>
-                    <input type="text" class="form-control shadow" id="inputProjectName" name="inputProjectName" value="{{update.project_name}}">
+                    <input type="text" class="form-control shadow" id="inputProjectName" name="inputProjectName" value="{{this.project_name}}">
                   </div>
                 <div class="col-md-6">
                   <label for="inputStartDate" class="form-label">Start Date</label>
-                  <input type="date" class="form-control shadow" id="inputStartDate" name="inputStartDate" value="{{update.start_date}}">
+                  <input type="date" class="form-control shadow" id="inputStartDate" name="inputStartDate" value="{{this.startUpload}}">
                 </div>
                 <div class="col-md-6">
                   <label for="inputEndDate" class="form-label">End Date</label>
-                  <input type="date" class="form-control shadow" id="inputEndDate" name="inputEndDate" value="{{update.end_date}}">
+                  <input type="date" class="form-control shadow" id="inputEndDate" name="inputEndDate" value="{{this.endUpload}}">
                 </div>
                 <div class="col-12 add-project-description">
                   <label for="inputDescription" class="form-label">Description</label>
-                  <textarea class="form-control shadow" id="inputDescription" name="inputDescription" value="{{update.project_description}}"></textarea>
+                  <textarea class="form-control shadow" id="inputDescription" name="inputDescription">{{this.project_description}}</textarea>
                 </div>
                 <div class="col-md-12">
                   <label>Technologies</label><br>
@@ -102,8 +103,9 @@
                         <label class="form-check-label text-secondary" for="typescript">TypeScript</label>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Upload Image</label>
+                <div class="mb-3 form-update">
+                    <label class="form-label">Upload Image</label><br>
+                    <img src="../public/assets/img/img1.jpg" class="rounded" alt="...">
                     <div class="input-project-image-group">
                         <label class="rounded shadow" for="formFile">
                             <p class="rounded">Choose</p>
@@ -116,6 +118,7 @@
                   <button type="submit" class="btn btn-dark rounded-pill">Submit</button>
                 </div>
               </form>
+              {{/each}}      
         </div>
       </div>
     <!-- add project end -->

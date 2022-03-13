@@ -44,12 +44,12 @@
           </ul>
           <span class="navbar-text">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
+              {{!-- <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="/register">Register</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/login">Login</a>
-              </li>
+              </li> --}}
               <li class="nav-contact">
                 <a href="/contact-me" class="btn btn-dark text-white" aria-current="page">Contact Me</a>
               </li>
@@ -98,11 +98,11 @@
             <img src="../public/assets/img/img1.jpg" class="card-img-top rounded" alt="image">
             <div class="card-body list-card">
               <h5 class="card-title">
-                <a class="text-dark text-decoration-none" href="/home/32" target="_blank">{{this.project_name}}</a>
+                <p><a class="text-dark text-decoration-none" href="/project-detail/{{this.id}}" target="_blank">{{this.project_name}}</a></p>
               </h5>
               <p style="margin-top: -10px;" class="form-text"><small>Duration: {{this.duration}}</small> <!-- <small>| 12 agustus 2020</small> -->
               </p>
-              <p class="card-text" style="text-align: justify;">{{this.project_description}}</p>
+              <p class="card-text text-project-list-description" style="text-align: justify;">{{this.project_description}}</p>
               <!-- <p style="margin-top: -15px; text-align: right;" class="form-text"><small>12 ago</small></p> -->
               <div class="d-flex justify-content-start gap-3">
                 <i class="{{this.node_js}}"></i>
@@ -111,16 +111,16 @@
                 <i class="{{this.type_script}}"></i>
               </div><br>
 
-              
+              {{!-- {{#if isLogin }} --}}
               <div class="btn-group d-flex justify-content-center gap-1" role="group" aria-label="Basic example">
                 <button type="button" class="btn btn-dark rounded">
                   <a class="text-decoration-none text-white" href="/update-project/{{this.id}}">edit</a>
                 </button>
                 <button type="button" class="btn btn-dark rounded">
-                  <a class="text-decoration-none text-white" href="/delete-post/{{@index}}">delete</a>
+                  <a class="text-decoration-none text-white" href="/delete-project/{{this.id}}">delete</a>
                 </button>
               </div>
-              
+              {{!-- {{/if}} --}}
 
             </div>
           </div>
