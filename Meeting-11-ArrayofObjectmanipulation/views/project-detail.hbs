@@ -41,18 +41,20 @@
             <li class="nav-item">
               <a class="nav-link" aria-current="page" href="/home">Home</a>
             </li>
+            {{#if isLogin}}
             <li class="nav-item">
               <a class="nav-link" href="/add-project">Add project</a>
             </li>
+            {{/if}}
           </ul>
           <span class="navbar-text">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
+              {{!-- <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="/register">Register</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/login">Login</a>
-              </li>
+              </li> --}}
               <li class="nav-contact">
                 <a href="/contact-me" class="btn btn-dark text-white" aria-current="page">Contact Me</a>
               </li>
@@ -65,7 +67,7 @@
 
     <!-- project detail start -->
     <div class="project-detail">
-        <h4 class="text-center text-black"><strong>Dumbways Web App{{id}}</strong></h4><br>
+        <h4 class="text-center text-black"><strong>{{dataDetailProject.projectName}}</strong></h4><br>
         <div class="card mb-3 card-pd border-0">
             <div class="row g-0 project-detail-bg">
               <div class="col-md-8">
@@ -77,37 +79,36 @@
                   <h5 class="card-title">Duration</h5>
                   <div class="d-flex time-duration">
                     <i class="fa-solid fa-calendar-days fa-2x me-md-3"></i>
-                    <p>12 Januari 2019 - 13 Februari 2020</p>
+                    <p>{{dataDetailProject.start_date}} - {{dataDetailProject.end_date}}</p>
                   </div>
                   <div class="d-flex time-duration">
                     <i class="fa-solid fa-clock fa-2x me-md-3"></i>
-                    <p>12 Month</p>
+                    <p>{{dataDetailProject.duration}}</p>
                   </div>
                 </div>
 
                 <div class="row card-body">
                     <h5 class="card-title">Technologies</h5>
                     <div class="d-flex time-duration">
-                        <i class="fa-brands fa-react fa-2x me-md-3"></i>
+                        <i class="{{dataDetailProject.reactjs}} me-md-3"></i>
                         <small class="text-muted me-md-3">React Js</small>
-                        <i class="fa-brands fa-js-square fa-2x me-md-3"></i>
-                        <small class="text-muted">JavaScript</small>
+                        <i class="{{dataDetailProject.typescript}} me-md-3"></i>
+                        <small class="text-muted">TypeScript</small>
                     </div><br><br>
                     <div class=" time-duration">
-                        <i class="fa-brands fa-node-js fa-2x me-md-3"></i>
+                        <i class="{{dataDetailProject.nodejs}} me-md-3"></i>
                         <small class="text-muted me-md-3">Node Js</small>
-                        <i class="fa-brands fa-google-play fa-2x me-md-2"></i>
-                        <small class="text-muted">Google Play</small>
+                        <i class="{{dataDetailProject.nextjs}} me-md-2"></i>
+                        <small class="text-muted">Next Js</small>
                     </div>
                 </div>
               </div>
             </div>
           </div>
           <div>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque a turpis nec nisi efficitur tincidunt a et libero. Nullam sit amet condimentum est, at molestie justo. Morbi dictum, eros eu feugiat tempor, nisl lectus accumsan massa, in eleifend neque tortor quis augue. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aliquam vulputate ipsum at nulla fermentum aliquet. Nulla consequat lorem sed nulla placerat rhoncus. Sed facilisis blandit ullamcorper. Donec augue diam, hendrerit et mauris et, semper semper elit.</p>
-              <p>Phasellus hendrerit enim velit, eu finibus felis rhoncus id. Vivamus aliquam turpis vitae erat feugiat, sit amet condimentum lacus mollis. Mauris eu ipsum commodo purus sollicitudin blandit. Maecenas convallis auctor nisi placerat laoreet. Duis faucibus tellus ut libero volutpat, eu accumsan ligula dapibus. Donec vitae ligula et lacus ultricies finibus et eget dui. Donec quis dictum eros. Nullam blandit leo eros, id viverra ipsum congue quis. Morbi vitae vulputate sem, tincidunt sodales turpis. Sed commodo sem sit amet turpis imperdiet vulputate. Vestibulum ut lorem eros. Phasellus ac elit condimentum, fringilla nulla at, consequat elit. Vestibulum nec ante ut ipsum tincidunt fermentum. Aliquam erat volutpat. Curabitur porttitor lorem ut ex suscipit auctor. Ut at urna at libero ultrices aliquam.</p>
-              <p>Mauris cursus aliquam arcu, non posuere leo tristique at. Donec efficitur, metus sit amet elementum bibendum, dui tortor aliquam ligula, ac convallis massa urna volutpat nunc. Proin aliquet nisl vitae mattis consequat. Fusce efficitur ac orci ac finibus. Cras eget convallis justo. Etiam nibh ex, feugiat ac ipsum in, tristique blandit ex. Ut varius felis sit amet mi vestibulum, ut gravida metus volutpat. Donec auctor tellus justo, porta commodo sem fringilla sit amet. Curabitur mauris mi, tristique et leo eu, elementum convallis urna. Integer nisl nulla, feugiat vitae euismod eu, pellentesque id lectus. Sed sed magna turpis. Donec odio nunc, dignissim at leo in, blandit molestie lacus. Nulla ultrices congue metus, ut laoreet dui fringilla a. Ut id felis non sapien posuere lobortis consectetur condimentum nisl. Aliquam eu orci in est accumsan interdum eget pharetra enim. Sed semper ex eget mauris feugiat pretium.</p>
-              <p>Donec egestas tincidunt volutpat. Fusce sed ex est. Pellentesque euismod, dui vel semper porta, magna neque elementum eros, et commodo odio mi at urna. Ut consequat nunc vitae mi tempor, id volutpat arcu pretium. Pellentesque et lobortis leo. Nam lacinia feugiat venenatis. Pellentesque in felis sem. Etiam rutrum turpis sit amet semper maximus. Duis euismod dignissim sapien, ac dictum tortor imperdiet at. In hac habitasse platea dictumst. Nam imperdiet, nisi id interdum iaculis, tellus elit egestas velit, vel bibendum dolor sem feugiat ex.</p>
+             <p>
+               {{dataDetailProject.description}}
+             </p>
           </div>
     </div>
     <!-- add project detail end -->

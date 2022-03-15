@@ -11,22 +11,10 @@ app.set('view engine', 'hbs')
 app.use('/public', express.static(__dirname + '/public'))
 app.use(express.urlencoded({extended: false}))
 
-//const isLogin = false
+const isLogin = false
 
 //deklarasi projects
-const postProjects = [
-    {
-        ProjectName: "post my project",
-        startDate: "2022-04-01",
-        startDate: "2022-07-01",
-        duration: "3 Month",
-        description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-        nodejs: "fa-brands fa-node-js fa-2x",
-        reactjs: "fa-brands fa-react fa-2x",
-        nextjs: "fa-brands fa-battle-net fa-2x",
-        typescript: "fa-brands fa-java fa-2x",
-    }
-]
+const postProjects = [];
 
 
 // membuat endpoint
@@ -39,22 +27,38 @@ app.get('/home', (req, res) => {
     let dataProjects = postProjects.map((data) => {
         return {
             ...data, //spreed operator: mengembalikan data setiap indek di var yg di interasi
+            start_date: getFullTime(data.startDate),
+            end_date: getFullTime(data.endDate),
+            isLogin: isLogin,
         }
     })
     //console.log(dataProjects)
     res.render('index', {
-        //isLogin: isLogin,
+        isLogin: isLogin,
         dataProjects: dataProjects
     })
 })
 
 
 //dari home mengarah ke project detail
-app.get('/home/:id', (req, res) => {
-    let id = req.params.id
-    console.log(`id postingan : ${id}`);
+app.get('/project-detail/:index', (req, res) => {
+    let index = req.params.index;
 
-    res.render('project-detail', {id : id})
+    let dataDetailProject = postProjects[index];
+    if (dataDetailProject) {
+        dataDetailProject = {
+            ...dataDetailProject,
+            start_date: getFullTime(dataDetailProject.startDate),
+            end_date: getFullTime(dataDetailProject.endDate)
+        };
+        console.log(dataDetailProject)
+    } else {
+        return res.redirect('/home', {isLogin: isLogin,});
+    }
+
+    //console.log(`id postingan : ${index}`);
+
+    res.render('project-detail', {dataDetailProject})
 })
 
 
@@ -77,21 +81,25 @@ app.post('/add-project', (request, respon) => {
 
     let postProject = {
         projectName,
-        startDate,
-        endDate,
-        duration: durationTime(startDate, endDate),
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
         description,
         nodejs,
         reactjs,
         nextjs,
         typescript,
+        duration: durationTime(startDate, endDate),
+      
     }
+
+    console.log(postProject)
+
     postProjects.push(postProject)    // push data
     respon.redirect('/home')    //menampilkan form mana setelah push
 })
 
 app.get('/delete-post/:index', (req, res) => {
-    let index = req.params.index
+    let index = req.params.index;
 
     console.log(`delete index : ${index}`);
 
@@ -99,43 +107,75 @@ app.get('/delete-post/:index', (req, res) => {
     res.redirect('/home')
 })
 
-app.get('/update-project/:index', function (request, respon) {
-    // let index = req.params.index
 
-    // console.log(`id update: ${index}`)
-    
-    respon.render('update-project')
+app.get('/update-project/:index', (req, res) => {
+    let index = req.params.index;
+
+    //console.log(`update index : ${index}`);
+
+    let dataUpdate = postProjects[index];
+
+    if (dataUpdate) {
+        dataUpdate = {
+            ...dataUpdate,
+            start_date: getUpdateTime(dataUpdate.startDate),
+            end_date: getUpdateTime(dataUpdate.endDate)
+        }
+    } else {
+        return res.redirect('home')
+    }
+
+    console.log(dataUpdate);
+
+    res.render('update-project', {
+        //isLogin: isLogin,
+        dataUpdate,
+        index: index
+    })
 })
 
-app.post('/update-project', (request, respon) => {
-    let ProjectName = request.body.inputProjectName
-    let startDate = request.body.inputStartDate
-    let endDate = request.body.inputEndDate
-    let description = request.body.inputDescription
-    let nodejs = request.body.nodejs
-    let reactjs = request.body.reactjs
-    let nextjs = request.body.nextjs
-    let typescript = request.body.typescript
+
+
+
+
+app.post('/update-project', (req, res) => {
+   
+    let projectName = req.body.inputProjectName
+    let startDate = req.body.inputStartDate
+    let endDate = req.body.inputEndDate
+    let description = req.body.inputDescription
+    let nodejs = req.body.nodejs
+    let reactjs = req.body.reactjs
+    let nextjs = req.body.nextjs
+    let typescript = req.body.typescript
 
 
     let postProject = {
-        ProjectName,
-        startDate,
-        endDate,
-        duration: durationTime(startDate, endDate),
+        projectName,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
         description,
         nodejs,
         reactjs,
         nextjs,
         typescript,
+        duration: durationTime(startDate, endDate),
+      
     }
-    postProjects.push(postProject)    // push data
-    console.log(postProjects)
-    respon.redirect('/home')    //menampilkan form mana setelah push
+
+    postProjects.projectName = `${postProject.projectName}`
+
+
+    console.log(postProject)
+
+
+
+    postProjects.push(postProject)
+    res.redirect('/home')
 })
 
 app.get('/contact-me', (req, res) => {
-    res.render('contact-me')
+    res.render('contact-me', {isLogin: isLogin,})
 })
 
 
@@ -174,3 +214,81 @@ function durationTime(startDate, endDate) {
 
     }
 }
+
+const month = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'Mei',
+    'Jun',
+    'Jul',
+    'Agu',
+    'Sep',
+    'Okt',
+    'Nov',
+    'Des'
+]
+
+function getFullTime(time) {
+
+    const date = time.getDate()
+    const monthIndex = time.getMonth()
+    const year = time.getFullYear()
+
+    let hours = time.getHours()
+    let minutes = time.getMinutes()
+
+    if (hours < 10) {
+        hours = `0${hours}`
+    }
+
+    if (minutes < 10) {
+        minutes = `0${minutes}`
+    }
+
+    return `${date} ${month[monthIndex]} ${year}`
+}
+
+
+const bulan = [
+    '01',
+    '02',
+    '03',
+    '04',
+    '05',
+    '06',
+    '07',
+    '08',
+    '09',
+    '10',
+    '11',
+    '12'
+]
+
+
+
+function getUpdateTime(time) {
+
+    const date = time.getDate()
+    const monthIndex = time.getMonth()
+    const year = time.getFullYear()
+
+    let hours = time.getHours()
+    let minutes = time.getMinutes()
+
+    if (hours < 10) {
+        hours = `0${hours}`
+    }
+
+    if (minutes < 10) {
+        minutes = `0${minutes}`
+    }
+
+    return `${year}-${bulan[monthIndex]}-${date}`
+}
+
+
+
+
+

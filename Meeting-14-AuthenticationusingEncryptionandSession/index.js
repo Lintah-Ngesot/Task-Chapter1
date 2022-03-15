@@ -1,8 +1,15 @@
 //pemanggilan package express
 const express = require('express')
 
+//import package bcrypt
+const bcrypt = require('bcrypt') //untuk password
+
+// import package express flash and express session
+const flash = require('express-flash') //untuk menampilkan pesan ketika berhasil register (nama flash nya bebas yaaa)
+const session = require('express-session')
+
 // import db connection
-const db = require('./connection/db')
+const db = require('./connection/db') //koneksi ke database
 
 // penggunaan package express
 const app = express()
@@ -10,11 +17,27 @@ const app = express()
 // set up template engine
 app.set('view engine', 'hbs')
 
+ 
 //===========
 app.use('/public', express.static(__dirname + '/public')) //ambil data di public
 app.use(express.urlencoded({extended: false}))
-
+app.use(flash()) // untuk kirim pesan di login
 //const isLogin = false
+
+//set up middleware session agar konek dari server ke pengguna
+app.use(
+    session ({
+        cookie: {
+            maxAge: 1000 * 60 * 60 * 3,
+            secure: false,
+            httpOnly: true
+        },
+        store: new session.MemoryStore(),
+        saveUninitialized: true,
+        resave: false,
+        secret: "secretValue"
+    })
+)
 
 
 
@@ -66,11 +89,14 @@ app.get('/home', (_req, res) => {
             data = data.map((dataProject) => {
                 return{
                     ...dataProject,
-                    duration: durationTime(dataProject.start_date, dataProject.end_date)
+                    duration: durationTime(dataProject.start_date, dataProject.end_date),
+                    isLogin: _req.session.isLogin
                 }
             })
             res.render('index',{
-                postDataProjects: data
+                postDataProjects: data,
+                isLogin: _req.session.isLogin,
+                user: _req.session.user
             })
             
             //console.log(data)
@@ -96,12 +122,15 @@ app.get('/project-detail/:id', (req, res) => {
                 ...myProjectDetail,
                 duration: durationTime(myProjectDetail.start_date, myProjectDetail.end_date),
                 startUpload: getFullTime(myProjectDetail.start_date),
-                endUpload: getFullTime(myProjectDetail.end_date)
+                endUpload: getFullTime(myProjectDetail.end_date),
+                isLogin: req.session.isLogin
             }
         })
         //console.log(myProjectDetail);
         res.render('project-detail', {
-            postProjectDetail: data
+            postProjectDetail: data,
+            isLogin: req.session.isLogin,
+            user: req.session.user
             })
         })
     })
@@ -110,8 +139,14 @@ app.get('/project-detail/:id', (req, res) => {
 
 
 // endpoint add project
-app.get('/add-project', (_req, res) => {
-    res.render('add-project')
+app.get('/add-project', (req, res) => {
+    // if (!req.session.isLogin) {
+    //     res.redirect('/home')
+    // }
+    res.render('add-project', {
+        isLogin: req.session.isLogin,
+        user: req.session.user
+    })
 })
 
 // mengirim data dari add project dikirim ke home
@@ -206,7 +241,8 @@ app.get('/update-project/:id', (req, res) => {
                 return {
                     ...dataUpdate,
                     startUpload: getUploadFullTime(dataUpdate.start_date),
-                    endUpload: getUploadFullTime(dataUpdate.end_date)
+                    endUpload: getUploadFullTime(dataUpdate.end_date),
+                    isLogin: req.session.isLogin
                 }
             })
 
@@ -225,6 +261,8 @@ app.get('/update-project/:id', (req, res) => {
 
             res.render('update-project', {
                 update: data,
+                isLogin: req.session.isLogin,
+                user: req.session.user
                 //startUpload: getUploadFullTime(result.start_date),
                 //endUpload: getUploadFullTime(result.end_date)
             })
@@ -266,16 +304,94 @@ app.post('/update-project/:id', (req, res) => {
 })
 
 // endpoint contct me
-app.get('/contact-me', (_req, res) => {
-    res.render('contact-me')
+app.get('/contact-me', (req, res) => {
+    res.render('contact-me', {
+        isLogin: req.session.isLogin,
+        user: req.session.user
+    })
 })
 
-app.get('/register', function (_req, res) {
+// endpoin register
+app.get('/register', function (req, res) {
         res.render('register')
+})
+
+app.post('/register', (req, res) => {
+    let {userName, userEmail, userPassword} = req.body
+    
+    const hashUserPassword = bcrypt.hashSync(userPassword, 10)
+    
+    //const isMatch = bcrypt.compareSync(userPassword, hashUserPassword)
+    //di BUNGKUS ke sebuah variabel objek
+    let dataRegister = {
+        userName,
+        userEmail,
+        userPassword,
+        hashUserPassword,
+        //isMatch
+        }
+        //console.log(dataRegister);
+    
+    db.connect((err, client, done) => {
+        if (err) throw err
+        let query = `INSERT INTO tb_user(user_name, user_email, user_password) VALUES
+                        ('${dataRegister.userName}', '${dataRegister.userEmail}', '${dataRegister.hashUserPassword}')`
+        client.query(query, (err, result) => {
+            done()
+            if (err) throw err
+
+            req.flash('success', 'registrasi berhasil')
+            res.redirect('/login')
+        })
     })
 
+})
+
+
+//endpoint login
 app.get('/login', (_req, res) => {
     res.render('login')
+})
+
+app.post('/login', (req, res) => {
+    let {userEmail, userPassword} = req.body
+  
+    db.connect((err, client, done) => {
+        if (err) throw err
+        let query = `SELECT * FROM tb_user WHERE user_email = '${userEmail}'`
+        
+        client.query(query, (err, result) => {
+            done()
+            if (err) throw err;
+
+            //console.log(result)
+
+            if (result.rowCount == 0) {
+                req.flash('danger', 'email and password doesnt match')
+                return res.redirect('/login')
+            }
+        
+
+            let isMatch = bcrypt.compareSync(userPassword, result.rows[0].user_password);
+
+         
+            if(isMatch) {
+                req.session.isLogin = true;
+                req.session.user = {
+                    id: result.rows[0].id_user,
+                    email: result.rows[0].user_email,
+                    name: result.rows[0].user_name
+                }
+                //console.log(req.session.user);
+
+                req.flash('success', 'login success')
+                res.redirect('/home');
+            } else {
+                req.flash('danger', 'email and password doesnt match')
+                res.redirect('/login');
+            }
+        })
+    })
 })
 
 
@@ -355,6 +471,11 @@ function durationTime(start_date, end_date) {
     }
 }
 
+app.get('/logout', (req, res) => {
+    req.session.destroy()
+    res.redirect('/home')
+})
+
 // ========== UNTUK DI UPDATE PROJECT ========== //
 const monthUpdate = [
     '01',
@@ -390,3 +511,12 @@ function getUploadFullTime(time) {
 
     return `${year}-${monthUpdate[monthIndex]}-${date}`
 }
+
+
+
+
+// window.setTimeout(function() {
+//   $(".alert").fadeTo(500, 0).slideUp(500, function(){
+//     $(this).remove(); 
+//   });
+// }, 5000);

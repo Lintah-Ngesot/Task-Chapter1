@@ -21,6 +21,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;1,200&family=Roboto+Mono:ital,wght@0,200;1,400&family=Source+Code+Pro:wght@200&display=swap" rel="stylesheet">
+
+    
 </head>
 
 <body>
@@ -38,18 +40,30 @@
             <li class="nav-item">
               <a class="nav-link active fw-bold" aria-current="page" href="/home">Home</a>
             </li>
+            {{#if isLogin }}
             <li class="nav-item">
               <a class="nav-link" href="/add-project">Add project</a>
             </li>
+            {{/if}}
           </ul>
           <span class="navbar-text">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              {{#if isLogin }}
+               <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="#">Hello,{{user.name}}</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+              </li>
+              {{else}}
               <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="/register">Register</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/login">Login</a>
               </li>
+              {{/if}}
+
               <li class="nav-contact">
                 <a href="/contact-me" class="btn btn-dark text-white" aria-current="page">Contact Me</a>
               </li>
@@ -59,6 +73,12 @@
       </div>
     </nav>
     <!-- navbar end -->
+    {{#if messages.success}}
+    <div class="alert alert-success alrt-home" role="alert">
+      {{messages.success}}
+    </div>
+    {{/if}}
+      
 
     <!-- index start -->
     <!-- card start -->
@@ -111,7 +131,7 @@
                 <i class="{{this.type_script}}"></i>
               </div><br>
 
-              {{!-- {{#if isLogin }} --}}
+              {{#if isLogin }}
               <div class="btn-group d-flex justify-content-center gap-1" role="group" aria-label="Basic example">
                 <button type="button" class="btn btn-dark rounded">
                   <a class="text-decoration-none text-white" href="/update-project/{{this.id}}">edit</a>
@@ -120,7 +140,7 @@
                   <a class="text-decoration-none text-white" href="/delete-project/{{this.id}}">delete</a>
                 </button>
               </div>
-              {{!-- {{/if}} --}}
+              {{/if}}
 
             </div>
           </div>

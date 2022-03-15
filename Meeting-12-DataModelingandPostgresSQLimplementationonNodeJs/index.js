@@ -14,15 +14,9 @@ app.set('view engine', 'hbs')
 app.use('/public', express.static(__dirname + '/public')) //ambil data di public
 app.use(express.urlencoded({extended: false}))
 
-//const isLogin = false
+const isLogin = true
 
 
-
-
-// membuat endpoint
-// app.get('/', (_req, res) => {
-//     res.render('index')
-// })
 app.get('/', (_req, res) => {
     let query = 'SELECT id, project_name, project_description, image, node_js, react_js, next_js, type_script, author_id, start_date, end_date FROM tb_project'
     
@@ -37,12 +31,13 @@ app.get('/', (_req, res) => {
             data = data.map((dataProject) => {
                 return{
                     ...dataProject,
+                    isLogin: isLogin,
                     duration: durationTime(dataProject.start_date, dataProject.end_date),
-                    //isLogin: isLogin
+                    
                 }
             })
             res.render('index',{
-                //isLogin: isLogin,
+                isLogin: isLogin,
                 postDataProjects: data,
             })
             
@@ -66,14 +61,17 @@ app.get('/home', (_req, res) => {
             data = data.map((dataProject) => {
                 return{
                     ...dataProject,
-                    duration: durationTime(dataProject.start_date, dataProject.end_date)
+                    duration: durationTime(dataProject.start_date, dataProject.end_date),
+                    isLogin: isLogin 
                 }
+                
             })
             res.render('index',{
-                postDataProjects: data
+                postDataProjects: data,
+                isLogin: isLogin
             })
             
-            //console.log(data)
+            console.log(result)
         })
     })
 })
@@ -209,15 +207,6 @@ app.get('/update-project/:id', (req, res) => {
                     endUpload: getUploadFullTime(dataUpdate.end_date)
                 }
             })
-
-            //result = result.rows[0] 
-            // result = data.map((dataUpdate) => {
-            //     return {
-            //         ...dataUpdate,
-            //         startUpload: getUploadFullTime(dataUpdate.start_date),
-            //         endUpload: getUploadFullTime(dataUpdate.end_date)
-            //     }
-            // })
 
             console.log(data)
             //console.log(result)

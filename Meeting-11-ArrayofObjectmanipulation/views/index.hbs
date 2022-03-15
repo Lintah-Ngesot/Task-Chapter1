@@ -38,18 +38,20 @@
             <li class="nav-item">
               <a class="nav-link active fw-bold" aria-current="page" href="/home">Home</a>
             </li>
+            {{#if isLogin}}
             <li class="nav-item">
               <a class="nav-link" href="/add-project">Add project</a>
             </li>
+            {{/if}}
           </ul>
           <span class="navbar-text">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
+              {{!-- <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="/register">Register</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/login">Login</a>
-              </li>
+              </li> --}}
               <li class="nav-contact">
                 <a href="/contact-me" class="btn btn-dark text-white" aria-current="page">Contact Me</a>
               </li>
@@ -98,9 +100,10 @@
             <img src="../public/assets/img/img1.jpg" class="card-img-top rounded" alt="image">
             <div class="card-body list-card">
               <h5 class="card-title">
-                <a class="text-dark text-decoration-none" href="/home/32" target="_blank">{{this.ProjectName}}</a>
+                <a class="text-black text-decoration-none" href="/project-detail/{{@index}}" target="_blank">{{this.projectName}}</a>
               </h5>
-              <p style="margin-top: -10px;" class="form-text"><small>Duration: {{this.duration}}</small> <!-- <small>| 12 agustus 2020</small> -->
+              <p style="margin-top: -10px;" class="form-text"><small>Duration: {{this.duration}}</small> 
+              {{!-- <small>{{this.start_date}}{{this.end_date}}</small> --}}
               </p>
               <p class="card-text" style="text-align: justify;">{{this.description}}</p>
               <!-- <p style="margin-top: -15px; text-align: right;" class="form-text"><small>12 ago</small></p> -->
@@ -111,7 +114,7 @@
                 <i class="{{this.typescript}}"></i>
               </div><br>
 
-              
+              {{#if isLogin}}
               <div class="btn-group d-flex justify-content-center gap-1" role="group" aria-label="Basic example">
                 <button type="button" class="btn btn-dark rounded">
                   <a class="text-decoration-none text-white" href="/update-project/{{@index}}">edit</a>
@@ -120,7 +123,7 @@
                   <a class="text-decoration-none text-white" href="/delete-post/{{@index}}">delete</a>
                 </button>
               </div>
-              
+              {{/if}}
 
             </div>
           </div>
