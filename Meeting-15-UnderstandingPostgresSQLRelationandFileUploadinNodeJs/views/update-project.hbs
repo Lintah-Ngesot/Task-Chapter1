@@ -97,21 +97,21 @@
                 <div class="col-md-12">
                   <label>Technologies</label><br>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input shadow" type="checkbox" id="nodejs" name="nodejs" value="fa-brands fa-node-js fa-2x">
+                        <input class="form-check-input shadow" type="checkbox" id="nodejs" name="nodejs" value="{{this.node_js}}" {{#if this.node_js}} checked {{/if}}>
                         <label class="form-check-label text-secondary" for="nodejs">Node js</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input shadow" type="checkbox" id="reactjs" name="reactjs" value="fa-brands fa-react fa-2x">
+                        <input class="form-check-input shadow" type="checkbox" id="reactjs" name="reactjs" value="{{this.react_js}}" {{#if this.react_js}} checked {{/if}}>
                         <label class="form-check-label text-secondary" for="reactjs">React Js</label>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input shadow" type="checkbox" id="nextjs" name="nextjs" value="fa-brands fa-battle-net fa-2x">
+                        <input class="form-check-input shadow" type="checkbox" id="nextjs" name="nextjs" value="{{this.next_js}}" {{#if this.next_js}} checked {{/if}}>
                         <label class="form-check-label text-secondary" for="nextjs">Next Js</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input shadow" type="checkbox" id="typescript" name="typescript" value="fa-brands fa-java fa-2x">
+                        <input class="form-check-input shadow" type="checkbox" id="typescript" name="typescript" value="{{this.type_script}}" {{#if this.type_script}} checked {{/if}}>
                         <label class="form-check-label text-secondary" for="typescript">TypeScript</label>
                     </div>
                 </div>

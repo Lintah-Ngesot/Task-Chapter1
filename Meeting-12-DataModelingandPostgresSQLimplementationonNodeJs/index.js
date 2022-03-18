@@ -57,7 +57,8 @@ app.get('/home', (_req, res) => {
             done()
             if (err) throw err
             let data = result.rows
-
+            
+            console.log(result)
             data = data.map((dataProject) => {
                 return{
                     ...dataProject,
@@ -71,7 +72,6 @@ app.get('/home', (_req, res) => {
                 isLogin: isLogin
             })
             
-            console.log(result)
         })
     })
 })
@@ -188,78 +188,144 @@ app.get('/delete-project/:id', (req, res) => {
 });
 
 // endpoint update project, ambil data dr home
-app.get('/update-project/:id', (req, res) => {
-    let {id} = req.params;
 
-    db.connect((err, client, done) => {
-        if (err) throw err;
-
-        let query = `SELECT * FROM tb_project WHERE id = ${id}`;
-        client.query(query, (err, result) => {
-            done();
-            if (err) throw err;
-
-            let data = result.rows
-            data = data.map((dataUpdate) => {
-                return {
-                    ...dataUpdate,
-                    startUpload: getUploadFullTime(dataUpdate.start_date),
-                    endUpload: getUploadFullTime(dataUpdate.end_date)
-                }
-            })
-
-            console.log(data)
-            //console.log(result)
-           
-
-            res.render('update-project', {
-                update: data,
-                //startUpload: getUploadFullTime(result.start_date),
-                //endUpload: getUploadFullTime(result.end_date)
-            })
-            //console.log(result)
-        })
-    })
-})
-
-// kirim data dari form ke home
-app.post('/update-project/:id', (req, res) => {
-    let {id} = req.params;
-
-    let {inputProjectName, inputDescription, nodejs, reactjs, nextjs, typescript, inputStartDate, inputEndDate} = req.body;
-    let uploadProject = {
-        inputProjectName,
-        inputDescription,
-        nodejs,
-        reactjs,
-        nextjs,
-        typescript,
-        inputStartDate,
-        inputEndDate
-    }
-
-    console.log(uploadProject)
-
-    db.connect((err, client, done) => {
-        if (err) throw err;
-
-        let query = `UPDATE tb_project SET project_name='${uploadProject.inputProjectName}', project_description='${uploadProject.inputDescription}', node_js='${uploadProject.nodejs}', react_js='${uploadProject.reactjs}', next_js='${uploadProject.nextjs}', type_script='${uploadProject.typescript}', start_date='${uploadProject.inputStartDate}', end_date='${uploadProject.inputEndDate}' WHERE id ='${id}' `;
-
-        client.query(query, (err, result) => {
-            done();
-            if (err) throw err;
-
-            res.redirect('/home')
-        })
-    })
-})
-
-// endpoint contct me
-app.get('/contact-me', (_req, res) => {
-    res.render('contact-me')
-})
+app.get('/update-project/:id', function (req, res) {
+        let id = req.params.id;
+        db.connect(function(err,client,done){
+              if(err) throw err;
+              const query =`SELECT * FROM tb_project WHERE id=${id}`;
+        
+              client.query(query,function(err, result) {
+                  done();
+                    if(err)throw err;
+                    let data = result.rows[0];
+                    data = {
+                          isLogin,
+                          ...data,
+                          startUpload: getUploadFullTime(data.start_date),
+                          endUpload: getUploadFullTime(data.end_date)
+                        }
+                        console.log(data);
+                
+                        res.render('update-project', {
+                            //isLogin,
+                            update: data
+                        });
+                      })
+                    })
+                
+                  });
 
 
+                
+                // app.get('/update-project/:id', (req, res) => {
+                //     let {id} = req.params;
+                
+                //     db.connect((err, client, done) => {
+                //         if (err) throw err;
+                
+                //         let query = `SELECT * FROM tb_project WHERE id = ${id}`;
+                //         client.query(query, (err, result) => {
+                //             done();
+                //             if (err) throw err;
+                
+                //             let data = result.rows
+                //             data = data.map((dataUpdate) => {
+                //                 return {
+                //                     ...dataUpdate,
+                //                     startUpload: getUploadFullTime(dataUpdate.start_date),
+                //                     endUpload: getUploadFullTime(dataUpdate.end_date)
+                //                 }
+                //             })
+                
+                //             console.log(data)
+                //             //console.log(result)
+                
+                //             res.render('update-project', {
+                //                 update: data,
+                //                 //startUpload: getUploadFullTime(result.start_date),
+                //                 //endUpload: getUploadFullTime(result.end_date)
+                //             })
+                //             //console.log(result)
+                //         })
+                //     })
+                // })
+
+                app.post('/update-project/:id', function (req, res) {
+                    let id = req.params.id;
+                  
+                    let {inputProjectName, inputDescription, nodejs, reactjs, nextjs, typescript, inputStartDate, inputEndDate} = req.body;
+                        let uploadProject = {
+                                inputProjectName,
+                                inputDescription,
+                                nodejs,
+                                reactjs,
+                                nextjs,
+                                typescript,
+                                inputStartDate,
+                                inputEndDate
+                            }
+                  
+                    console.log(uploadProject)
+                    // let data = req.body;
+                    db.connect(function (err, client, done) {
+                      if (err) throw err;
+                  
+                      const query = `UPDATE tb_project SET project_name='${uploadProject.inputProjectName}', project_description='${uploadProject.inputDescription}' WHERE id=${id}`;
+                  
+                    //   const query = `UPDATE tb_project(project_name, project_description) SET('${uploadProject.inputProjectName}', '${uploadProject.inputDescription}'}) WHERE id=${id};`
+                  
+                      client.query(query, function (err, result) {
+                          done();
+                          if (err) throw err;
+                          res.redirect('/home');
+                        });
+                    });
+                    //console.log(data);
+                  });
+
+
+
+
+                
+                // kirim data dari form ke home
+                // app.post('/update-project/:id', (req, res) => {
+                    //     let {id} = req.params;
+                    
+                    //     let {inputProjectName, inputDescription, nodejs, reactjs, nextjs, typescript, inputStartDate, inputEndDate} = req.body;
+                    //     let uploadProject = {
+                        //         inputProjectName,
+                        //         inputDescription,
+                        //         nodejs,
+                        //         reactjs,
+                        //         nextjs,
+                        //         typescript,
+                        //         inputStartDate,
+                        //         inputEndDate
+                        //     }
+                        
+                        //     console.log(uploadProject)
+                        
+                        //     db.connect((err, client, done) => {
+                            //         if (err) throw err;
+                            
+                            //         let query = `UPDATE tb_project SET project_name='${uploadProject.inputProjectName}', project_description='${uploadProject.inputDescription}', node_js='${uploadProject.nodejs}', react_js='${uploadProject.reactjs}', next_js='${uploadProject.nextjs}', type_script='${uploadProject.typescript}', start_date='${uploadProject.inputStartDate}', end_date='${uploadProject.inputEndDate}' WHERE id ='${id}' `;
+                            
+                            //         client.query(query, (err, result) => {
+                                //             done();
+                                //             if (err) throw err;
+                                
+                                //             res.redirect('/home')
+                                //         })
+                                //     })
+                                // })
+                                
+                                // endpoint contct me
+                                app.get('/contact-me', (_req, res) => {
+                                    res.render('contact-me')
+                                })
+                                
+                                
 
 
 

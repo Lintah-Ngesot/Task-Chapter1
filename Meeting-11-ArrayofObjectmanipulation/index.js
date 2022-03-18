@@ -11,7 +11,7 @@ app.set('view engine', 'hbs')
 app.use('/public', express.static(__dirname + '/public'))
 app.use(express.urlencoded({extended: false}))
 
-const isLogin = false
+const isLogin = true
 
 //deklarasi projects
 const postProjects = [];

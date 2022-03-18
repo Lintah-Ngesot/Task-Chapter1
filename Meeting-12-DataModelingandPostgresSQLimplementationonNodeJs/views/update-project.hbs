@@ -63,24 +63,24 @@
     <!-- add project start -->
     <div class="position-relative ">
         <div class="position-absolute top-0 start-50 translate-middle-x"><br><br>
-        {{#each update}}
-            <form class="row g-3" action="/update-project/{{this.id}}" method="POST">
+        {{!-- {{#each update}} --}}
+            <form class="row g-3" action="/update-project/{{update.id}}" method="POST">
                 <h4 class="text-center"><strong>UPDATE MY PROJECT</strong></h4>
                 <div class="col-12">
                     <label for="inputProjectName" class="form-label">Project Name</label>
-                    <input type="text" class="form-control shadow" id="inputProjectName" name="inputProjectName" value="{{this.project_name}}">
+                    <input type="text" class="form-control shadow" id="inputProjectName" name="inputProjectName" value="{{update.project_name}}">
                   </div>
                 <div class="col-md-6">
                   <label for="inputStartDate" class="form-label">Start Date</label>
-                  <input type="date" class="form-control shadow" id="inputStartDate" name="inputStartDate" value="{{this.startUpload}}">
+                  <input type="date" class="form-control shadow" id="inputStartDate" name="inputStartDate" value="{{update.startUpload}}">
                 </div>
                 <div class="col-md-6">
                   <label for="inputEndDate" class="form-label">End Date</label>
-                  <input type="date" class="form-control shadow" id="inputEndDate" name="inputEndDate" value="{{this.endUpload}}">
+                  <input type="date" class="form-control shadow" id="inputEndDate" name="inputEndDate" value="{{update.endUpload}}">
                 </div>
                 <div class="col-12 add-project-description">
                   <label for="inputDescription" class="form-label">Description</label>
-                  <textarea class="form-control shadow" id="inputDescription" name="inputDescription">{{this.project_description}}</textarea>
+                  <textarea class="form-control shadow" id="inputDescription" name="inputDescription">{{update.project_description}}</textarea>
                 </div>
                 <div class="col-md-12">
                   <label>Technologies</label><br>
@@ -118,7 +118,7 @@
                   <button type="submit" class="btn btn-dark rounded-pill">Submit</button>
                 </div>
               </form>
-              {{/each}}      
+              {{!-- {{/each}}       --}}
         </div>
       </div>
     <!-- add project end -->

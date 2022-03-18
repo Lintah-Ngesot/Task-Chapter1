@@ -203,4 +203,9 @@ form .sub-register {
 .card-body small {
     font-size: large;
 }
+
+.cont-tech-new .barbar .xzz i {
+    font-family: 'Poppins', sans-serif;
+    color: black;
+}
 /* project detail end */

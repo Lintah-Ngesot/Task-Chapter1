@@ -32,7 +32,7 @@ app.use(flash()) // untuk kirim pesan di login
 app.use(
     session ({
         cookie: {
-            maxAge: 1000 * 60 * 60 * 3,
+            maxAge: 1000 * 60 * 60 * 3, //lama login, brapa lama sih dia akan login
             secure: false,
             httpOnly: true
         },
@@ -233,6 +233,14 @@ app.post('/add-project', upload.single('imageUpload'), (req, res) => {
     })
 });
 
+// function checkboxRender(tick) {
+//     if (tick == "true") {
+//         return true
+//     } else if (tick != true) {
+//         return false
+//     }
+//   }
+
 // endpoint delete post
 app.get('/delete-project/:id', (req, res) => {
     let {id} = req.params;
@@ -265,6 +273,11 @@ app.get('/update-project/:id', (req, res) => {
             data = data.map((dataUpdate) => {
                 return {
                     ...dataUpdate,
+                    // node_js:viewCheck(dataUpdate.node_js),
+                    // react_js:viewCheck(dataUpdate.react_js),
+                    // next_js:viewCheck(dataUpdate.next_js),
+                    // type_script:viewCheck(dataUpdate.type_script),
+                    
                     startUpload: getUploadFullTime(dataUpdate.start_date),
                     endUpload: getUploadFullTime(dataUpdate.end_date),
                     isLogin: req.session.isLogin
@@ -392,8 +405,6 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
     let {userEmail, userPassword} = req.body
   
-  
-    
     db.connect((err, client, done) => {
         if (err) throw err
         let query = `SELECT * FROM tb_user WHERE user_email = '${userEmail}'`
@@ -405,14 +416,12 @@ app.post('/login', (req, res) => {
             //console.log(result)
 
             if (result.rowCount == 0) {
-                req.flash('danger', 'email and password doesnt match')
+                req.flash('danger', 'email dan/atau password salah')
                 return res.redirect('/login')
             }
-        
 
             let isMatch = bcrypt.compareSync(userPassword, result.rows[0].user_password);
 
-         
             if(isMatch) {
                 req.session.isLogin = true;
                 req.session.user = {
@@ -435,7 +444,10 @@ app.post('/login', (req, res) => {
 
 
 
-
+app.get('/logout', (req, res) => {
+    req.session.destroy()
+    res.redirect('/home')
+})
 
 
 
@@ -509,10 +521,7 @@ function durationTime(start_date, end_date) {
     }
 }
 
-app.get('/logout', (req, res) => {
-    req.session.destroy()
-    res.redirect('/home')
-})
+
 
 // ========== UNTUK DI UPDATE PROJECT ========== //
 const monthUpdate = [

@@ -86,11 +86,44 @@
                   </div>
                 </div>
 
+
+                {{!-- <div class="container" style="margin-left: 17px;">
+                    <div class="row row-cols-2">
+                    {{#if project.technologies.[0]}}
+                    <div class="col">
+                      <i class="{{this.node_js}}"></i><p>Node Js</p>
+                    </div>
+                    {{/if}}
+                    {{#if project.technologies.[0]}}
+                    <div class="col">
+                      <i class="{{this.react_js}}"> React Js</i>
+                    </div>
+                    {{/if}}
+                    {{#if project.technologies.[0]}}
+                    <div class="col">
+                      <i class="{{this.next_js}} me-md-2"></i>
+                    </div>
+                    {{/if}}
+                    {{#if project.technologies.[0]}}
+                    <div class="col">
+                      <i class="{{this.type_script}} me-md-3"></i>
+                    </div>
+                    {{/if}}
+                  </div>
+                </div> --}}
+
+
+
+
+
+
                 <div class="row card-body">
                     <h5 class="card-title">Technologies</h5>
                     <div class="d-flex time-duration">
+                      {{#if this.react_js}}
                         <i class="{{this.react_js}} me-md-3"></i>
                         <small class="text-muted me-md-3">React Js</small>
+                        {{/if}}
                         <i class="{{this.type_script}} me-md-3"></i>
                         <small class="text-muted">JavaScript</small>
                     </div><br><br>
