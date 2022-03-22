@@ -39,7 +39,7 @@ app.use(
         store: new session.MemoryStore(),
         saveUninitialized: true,
         resave: false,
-        secret: "secretValue"
+        secret: "secret"
     })
 )
 
